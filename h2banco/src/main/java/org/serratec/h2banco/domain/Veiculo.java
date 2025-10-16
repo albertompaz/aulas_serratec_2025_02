@@ -1,11 +1,20 @@
 package org.serratec.h2banco.domain;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,11 +25,13 @@ public class Veiculo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Schema(description = "Identificador unico do veiculo")
 	private Long id;
 
 	@NotBlank(message = "Preencha a placa")
 	@Size(max = 7)
 	@Column(nullable = false, length = 7)
+	@Schema(description = "Placa brasileira do veiculo", required = true)
 	private String placa;
 
 	@NotBlank(message = "Preencha a marca")
@@ -35,6 +46,14 @@ public class Veiculo {
 
 	@Embedded
 	private Caracteristica caracteristica;
+
+	@OneToOne
+	@JoinColumn(name = "id_proprietario")
+	private Proprietario proprietario;
+
+	@JsonManagedReference
+	@OneToMany(mappedBy = "veiculo")
+	private List<Manutencao> manutencoes;
 
 	public Long getId() {
 		return id;
@@ -74,6 +93,22 @@ public class Veiculo {
 
 	public void setCaracteristica(Caracteristica caracteristica) {
 		this.caracteristica = caracteristica;
+	}
+
+	public Proprietario getProprietario() {
+		return proprietario;
+	}
+
+	public void setProprietario(Proprietario proprietario) {
+		this.proprietario = proprietario;
+	}
+
+	public List<Manutencao> getManutencoes() {
+		return manutencoes;
+	}
+
+	public void setManutencoes(List<Manutencao> manutencoes) {
+		this.manutencoes = manutencoes;
 	}
 
 }

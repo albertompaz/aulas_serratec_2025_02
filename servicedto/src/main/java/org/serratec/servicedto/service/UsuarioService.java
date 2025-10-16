@@ -1,0 +1,57 @@
+package org.serratec.servicedto.service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.serratec.servicedto.domain.Usuario;
+import org.serratec.servicedto.dto.UsuarioDTO;
+import org.serratec.servicedto.dto.UsuarioInserirDTO;
+import org.serratec.servicedto.exception.EmailException;
+import org.serratec.servicedto.exception.SenhaException;
+import org.serratec.servicedto.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UsuarioService {
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
+	public List<UsuarioDTO> findAll() {
+		/*
+		List<Usuario> usuarios = usuarioRepository.findAll();
+		List<UsuarioDTO> usuariosDTO = new ArrayList<>();
+		for (Usuario u: usuarios) {
+			usuariosDTO.add(new UsuarioDTO(u));
+		}
+		return usuariosDTO;
+		*/
+		List<UsuarioDTO> usuariosDTO = usuarioRepository.findAll()
+			.stream()
+			.map(UsuarioDTO::new)
+			.collect(Collectors.toList());
+		return usuariosDTO;
+	}
+	
+	public UsuarioDTO inserir(UsuarioInserirDTO usuInsDTO) {
+		if (!usuInsDTO.getSenha().equals(usuInsDTO.getConfirmaSenha())) {
+			throw new SenhaException("Senha e Confirma Senha não são iguais");
+		}
+		
+		if(usuarioRepository.findByEmail(usuInsDTO.getEmail()) != null) {
+			throw new EmailException("Email ja existente");			
+		}
+		
+		Usuario usuario = new Usuario();
+		usuario.setNome(usuInsDTO.getNome());
+		usuario.setEmail(usuInsDTO.getEmail());
+		usuario.setSenha(usuInsDTO.getSenha());
+		
+		usuario = usuarioRepository.save(usuario);
+		
+		UsuarioDTO usuDTO = new UsuarioDTO(usuario);
+		return usuDTO;
+	}
+
+}

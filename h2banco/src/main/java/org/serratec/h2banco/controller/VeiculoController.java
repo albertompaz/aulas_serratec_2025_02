@@ -18,6 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
@@ -32,6 +37,17 @@ public class VeiculoController {
 		return ResponseEntity.ok(veiculoRepository.findAll());
 	}
 	
+	@Operation(summary = "Lista o veiculo pelo ID", description = "A resposta lista os dados dos veiculos: id, placa, marca, etc...")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200",
+					content = {@Content(schema = @Schema(implementation = Veiculo.class), 
+					mediaType = "application/json")},
+					description = "Retorna todos os veiculos"),
+			@ApiResponse(responseCode = "404",
+			description = "Veiculo não encontrado"),
+			@ApiResponse(responseCode = "500",
+			description = "Ocorreu um erro no servidor"),
+	})
 	@GetMapping("/{id}")
 	public ResponseEntity<Veiculo> buscar(@PathVariable Long id) {
 		Optional<Veiculo> veiculoOpt = veiculoRepository.findById(id);
