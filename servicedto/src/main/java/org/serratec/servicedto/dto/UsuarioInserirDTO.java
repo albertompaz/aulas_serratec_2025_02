@@ -1,11 +1,16 @@
 package org.serratec.servicedto.dto;
 
+import java.util.Set;
+
+import org.serratec.servicedto.domain.Perfil;
+
 public class UsuarioInserirDTO {
 
 	private String nome;
 	private String email;
 	private String senha;
 	private String confirmaSenha;
+	private Set<Perfil> perfis;
 
 	public String getNome() {
 		return nome;
@@ -37,6 +42,14 @@ public class UsuarioInserirDTO {
 
 	public void setConfirmaSenha(String confirmaSenha) {
 		this.confirmaSenha = confirmaSenha;
+	}
+
+	public Set<Perfil> getPerfis() {
+		return perfis;
+	}
+
+	public void setPerfis(Set<Perfil> perfis) {
+		this.perfis = perfis;
 	}
 
 }
